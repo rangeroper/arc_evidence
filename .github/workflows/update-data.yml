@@ -1,0 +1,45 @@
+name: Update Data from ts_arc_growth_bot
+
+on:
+  schedule:
+    - cron: "0 0 * * *"    # Runs at midnight UTC (adjust timing as needed)
+  workflow_dispatch:  # Allows manual execution
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the arc_evidence repository
+      - name: Checkout arc_evidence repository
+        uses: actions/checkout@v3
+
+      # Step 2: Add ts_arc_growth_bot repository as a remote
+      - name: Add ts_arc_growth_bot repository
+        run: |
+          git remote add ts_arc_growth_bot https://github.com/rangeroper/ts_arc_growth_bot.git  # URL of the ts_arc_growth_bot repo
+          git fetch ts_arc_growth_bot  # Fetch the latest changes
+
+      # Step 3: Checkout the branch (assuming the branch to fetch is 'main')
+      - name: Checkout ts_arc_growth_bot branch
+        run: |
+          git checkout ts_arc_growth_bot/main  # Replace 'main' if a different branch is used
+
+      # Step 4: Copy CSV files from ts_arc_growth_bot repository to arc_evidence repository
+      - name: Copy CSV files
+        run: |
+          # Ensure the 'data/csv' directory exists in the arc_evidence repository
+          mkdir -p data/csv
+          # Copy CSV files from the ts_arc_growth_bot repo to arc_evidence repo
+          cp -r ts_arc_growth_bot/data/csv/* data/csv/
+
+      # Step 5: Commit and Push Data Changes to arc_evidence Repository
+      - name: Commit and Push Data Changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/csv/*  # Add updated CSV files
+          git commit -m "Update CSV metrics data from ts_arc_growth_bot" || echo "No changes to commit"
+          git push origin main  # Push to the main branch of the arc_evidence repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Allows push access to arc_evidence repository
