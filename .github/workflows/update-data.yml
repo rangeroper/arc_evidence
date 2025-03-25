@@ -20,10 +20,11 @@ jobs:
           git remote add ts_arc_growth_bot https://github.com/rangeroper/ts_arc_growth_bot.git  # URL of the ts_arc_growth_bot repo
           git fetch ts_arc_growth_bot  # Fetch the latest changes
 
-      # Step 3: Checkout the branch (assuming the branch to fetch is 'main')
-      - name: Checkout ts_arc_growth_bot branch
+      # Step 3: Fetch and checkout the specific branch of ts_arc_growth_bot
+      - name: Fetch and Checkout ts_arc_growth_bot branch
         run: |
-          git checkout ts_arc_growth_bot/main  # Replace 'main' if a different branch is used
+          git fetch ts_arc_growth_bot main  # Fetch the 'main' branch from the ts_arc_growth_bot repository
+          git checkout FETCH_HEAD  # Checkout the fetched 'main' branch from ts_arc_growth_bot
 
       # Step 4: Copy CSV files from ts_arc_growth_bot repository to arc_evidence repository
       - name: Copy CSV files
