@@ -32,7 +32,7 @@ jobs:
           # Ensure the 'data/csv' directory exists in the arc_evidence repository
           mkdir -p data/csv
           # Copy CSV files from the ts_arc_growth_bot repo to arc_evidence repo
-          cp -r ts_arc_growth_bot/data/csv/* data/csv/
+          cp -r ts_arc_growth_bot/data/csv/* ./data/csv/  # Adjusted to use a relative path
 
       # Step 5: Commit and Push Data Changes to arc_evidence Repository
       - name: Commit and Push Data Changes to arc_evidence
