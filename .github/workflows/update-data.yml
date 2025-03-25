@@ -26,28 +26,37 @@ jobs:
           git fetch ts_arc_growth_bot master  # Fetch the 'master' branch from ts_arc_growth_bot repository
           git checkout ts_arc_growth_bot/master  # Checkout the 'master' branch from ts_arc_growth_bot repository
 
-      # Step 4: Debug step - List files in ts_arc_growth_bot/data/csv to confirm it's there
+      # Step 4: List the entire file structure of the ts_arc_growth_bot repository
+      - name: List the entire file structure of ts_arc_growth_bot
+        run: |
+          echo "Listing the entire file structure of ts_arc_growth_bot"
+          git ls-tree -r HEAD  # List all files in the repository recursively
+
+      # Step 5: Debug step - List files in ts_arc_growth_bot/data/csv to confirm it's there
       - name: List files in ts_arc_growth_bot/data/csv
         run: |
           echo "Checking the contents of ts_arc_growth_bot/data/csv"
-          ls -la ts_arc_growth_bot/data/csv/
+          if [ -d "ts_arc_growth_bot/data/csv" ]; then
+            ls -la ts_arc_growth_bot/data/csv/
+          else
+            echo "Directory ts_arc_growth_bot/data/csv does not exist!"
+            exit 1  # Exit with an error if the directory doesn't exist
+          fi
 
-      # Step 5: Ensure the 'data/csv' directory exists in arc_evidence repository
+      # Step 6: Ensure the 'data/csv' directory exists in arc_evidence repository
       - name: Ensure the 'data/csv' directory exists in arc_evidence repository
         run: |
-          mkdir -p data/csv  # Create the directory in arc_evidence repo if it doesn't exist
+          if [ ! -d "data/csv" ]; then
+            echo "Directory data/csv does not exist in arc_evidence repository. Creating it now."
+            mkdir -p data/csv  # Create the directory in arc_evidence repo if it doesn't exist
+          else
+            echo "Directory data/csv already exists in arc_evidence repository."
+          fi
 
-      # Step 6: Copy CSV files from ts_arc_growth_bot repository to arc_evidence repository
+      # Step 7: Copy CSV files from ts_arc_growth_bot repository to arc_evidence repository
       - name: Copy CSV files from ts_arc_growth_bot to arc_evidence
         run: |
-          # Explicitly copy all CSV files (including subdirectories) to the arc_evidence repo
           cp -r ts_arc_growth_bot/data/csv/* ./data/csv/  # Copying recursively
-
-      # Step 7: Debug step - List files in the arc_evidence/data/csv after copy
-      - name: List files in arc_evidence/data/csv
-        run: |
-          echo "Checking the contents of arc_evidence/data/csv after copy"
-          ls -la data/csv/
 
       # Step 8: Commit and Push Data Changes to arc_evidence Repository
       - name: Commit and Push Data Changes to arc_evidence
