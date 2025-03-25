@@ -26,15 +26,28 @@ jobs:
           git fetch ts_arc_growth_bot master  # Fetch the 'master' branch from the ts_arc_growth_bot repository
           git checkout FETCH_HEAD  # Checkout the fetched 'master' branch from ts_arc_growth_bot
 
-      # Step 4: Copy CSV files from ts_arc_growth_bot repository to arc_evidence repository
+      # Step 4: Debug step - List the files in ts_arc_growth_bot/data/csv to confirm it's there
+      - name: List files in ts_arc_growth_bot/data/csv
+        run: |
+          ls -la ts_arc_growth_bot/data/csv/
+
+      # Step 5: Ensure the 'data/csv' directory exists in arc_evidence repository
+      - name: Ensure the 'data/csv' directory exists in arc_evidence repository
+        run: |
+          mkdir -p data/csv
+
+      # Step 6: Copy CSV files from ts_arc_growth_bot repository to arc_evidence repository
       - name: Copy CSV files from ts_arc_growth_bot to arc_evidence
         run: |
-          # Ensure the 'data/csv' directory exists in the arc_evidence repository
-          mkdir -p data/csv
           # Copy CSV files from the ts_arc_growth_bot repo to arc_evidence repo
           cp -r ts_arc_growth_bot/data/csv/* ./data/csv/  # Adjusted to use a relative path
 
-      # Step 5: Commit and Push Data Changes to arc_evidence Repository
+      # Step 7: Debug step - List files in the arc_evidence/data/csv after copy
+      - name: List files in arc_evidence/data/csv
+        run: |
+          ls -la data/csv/
+
+      # Step 8: Commit and Push Data Changes to arc_evidence Repository
       - name: Commit and Push Data Changes to arc_evidence
         run: |
           git config --global user.name "GitHub Actions Bot"
